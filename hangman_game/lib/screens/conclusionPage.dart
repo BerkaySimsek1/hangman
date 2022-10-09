@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ConclusionPage extends StatefulWidget {
-  ConclusionPage({super.key, required this.conc});
-  String conc;
+  const ConclusionPage({super.key, required this.conc});
+  final String conc;
 
   @override
   State<ConclusionPage> createState() => _ConclusionPageState();
@@ -18,7 +18,7 @@ class _ConclusionPageState extends State<ConclusionPage> {
           children: [
             Text(
               widget.conc,
-              style: TextStyle(fontSize: 50),
+              style: const TextStyle(fontSize: 50),
             )
           ],
         ),
