@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:hangman_game/api/gettingWord.dart';
 import 'package:hangman_game/screens/conclusionPage.dart';
 import 'package:hangman_game/utils/alphabet.dart';
@@ -17,10 +15,10 @@ class _GamepageState extends State<Gamepage> {
   String word = 'AAA';
   List letters = [];
   List choosenLetters = [];
-  List x = [];
-  int hak = 6;
-  int num = 0;
-  bool deneme = false;
+  List controlList = [];
+  int life = 6;
+  int resultControl = 0;
+  bool boolResult = false;
   late Future<List> response;
   @override
   void initState() {
@@ -49,7 +47,7 @@ class _GamepageState extends State<Gamepage> {
         elevation: 0,
         centerTitle: true,
         title: Stack(children: [
-          Icon(
+          const Icon(
             Icons.favorite,
             size: 50,
           ),
@@ -57,8 +55,8 @@ class _GamepageState extends State<Gamepage> {
             top: 10,
             left: 19,
             child: Text(
-              hak.toString(),
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              life.toString(),
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
           )
         ]),
@@ -128,13 +126,13 @@ class _GamepageState extends State<Gamepage> {
               flex: 3,
               child: Stack(
                 children: [
-                  figureImage(hak <= 6, "assets/hang.png"),
-                  figureImage(hak <= 5, "assets/head.png"),
-                  figureImage(hak <= 4, "assets/body.png"),
-                  figureImage(hak <= 3, "assets/ra.png"),
-                  figureImage(hak <= 2, "assets/la.png"),
-                  figureImage(hak <= 1, "assets/rl.png"),
-                  figureImage(hak <= 0, "assets/ll.png"),
+                  figureImage(life <= 6, "assets/hang.png"),
+                  figureImage(life <= 5, "assets/head.png"),
+                  figureImage(life <= 4, "assets/body.png"),
+                  figureImage(life <= 3, "assets/ra.png"),
+                  figureImage(life <= 2, "assets/la.png"),
+                  figureImage(life <= 1, "assets/rl.png"),
+                  figureImage(life <= 0, "assets/ll.png"),
                 ],
               )),
           Expanded(
@@ -151,28 +149,28 @@ class _GamepageState extends State<Gamepage> {
                               : () {
                                   setState(() {
                                     choosenLetters.add(e);
-                                    x.add(e);
+                                    controlList.add(e);
                                     for (var i in letters) {
-                                      deneme = false;
-                                      if (x.contains(i)) {
-                                        deneme = true;
-                                        x.remove(i);
+                                      boolResult = false;
+                                      if (controlList.contains(i)) {
+                                        boolResult = true;
+                                        controlList.remove(i);
                                         break;
                                       } else {
-                                        deneme = false;
+                                        boolResult = false;
                                       }
                                     }
 
-                                    if (deneme == false) {
-                                      hak -= 1;
+                                    if (boolResult == false) {
+                                      life -= 1;
                                     }
                                     print(letters.toString());
                                     print(choosenLetters);
                                     for (var i in letters) {
                                       if (choosenLetters.contains(i)) {
-                                        num += 1;
+                                        resultControl += 1;
                                       }
-                                      if (num == letters.length) {
+                                      if (resultControl == letters.length) {
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
@@ -182,8 +180,8 @@ class _GamepageState extends State<Gamepage> {
                                         break;
                                       }
                                     }
-                                    num = 0;
-                                    if (hak == 0) {
+                                    resultControl = 0;
+                                    if (life == 0) {
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
