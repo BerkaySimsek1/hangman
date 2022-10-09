@@ -148,11 +148,15 @@ class _customButtonState extends State<customButton> {
                 onPressed: () {
                   switch (widget.which) {
                     case 1:
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Gamepage(),
-                          ));
+                      setState(() {
+                        Future((() {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Gamepage(),
+                              ));
+                        }));
+                      });
                       break;
                     case 2:
                       print("world");
