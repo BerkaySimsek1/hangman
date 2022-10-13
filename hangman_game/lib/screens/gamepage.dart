@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hangman_game/api/gettingWord.dart';
 import 'package:hangman_game/screens/conclusionPage.dart';
 import 'package:hangman_game/utils/alphabet.dart';
@@ -12,7 +13,7 @@ class Gamepage extends StatefulWidget {
 }
 
 class _GamepageState extends State<Gamepage> {
-  String word = 'AAA';
+  String word = '';
   List letters = [];
   List choosenLetters = [];
   List controlList = [];
@@ -20,11 +21,11 @@ class _GamepageState extends State<Gamepage> {
   int resultControl = 0;
   bool boolResult = false;
   late Future<List> response;
+
   @override
   void initState() {
     super.initState();
     response = getWord();
-
     choosenLetters = [];
   }
 
@@ -46,20 +47,49 @@ class _GamepageState extends State<Gamepage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: Stack(children: [
-          const Icon(
-            Icons.favorite,
-            size: 50,
+        title: Padding(
+          padding: const EdgeInsets.only(right: 45.0),
+          child: Row(
+            children: [
+              Text("Life: "),
+              Stack(children: [
+                const Icon(
+                  Icons.favorite,
+                  size: 50,
+                ),
+                Positioned(
+                  top: 10,
+                  left: 19,
+                  child: Text(
+                    life.toString(),
+                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+                )
+              ]),
+            ],
           ),
-          Positioned(
-            top: 10,
-            left: 19,
-            child: Text(
-              life.toString(),
-              style: const TextStyle(fontSize: 20, color: Colors.black),
-            ),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                mainMenuAlertDialog(context);
+              },
+              icon: const Icon(
+                Icons.home,
+                size: 40,
+              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: TextButton(
+                onPressed: () {
+                  newGameAlertDialog(context);
+                },
+                child: const Text(
+                  "New Game",
+                  style: TextStyle(color: Colors.cyan, fontSize: 16),
+                )),
           )
-        ]),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -148,6 +178,7 @@ class _GamepageState extends State<Gamepage> {
                               ? null
                               : () {
                                   setState(() {
+                                    HapticFeedback.mediumImpact();
                                     choosenLetters.add(e);
                                     controlList.add(e);
                                     for (var i in letters) {
@@ -164,7 +195,7 @@ class _GamepageState extends State<Gamepage> {
                                     if (boolResult == false) {
                                       life -= 1;
                                     }
-                                    print(letters.toString());
+                                    print(letters.join(""));
                                     print(choosenLetters);
                                     for (var i in letters) {
                                       if (choosenLetters.contains(i)) {
@@ -175,7 +206,10 @@ class _GamepageState extends State<Gamepage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  ConclusionPage(conc: 'Win'),
+                                                  ConclusionPage(
+                                                conc: 'Win!',
+                                                word: letters.join(""),
+                                              ),
                                             ));
                                         break;
                                       }
@@ -186,7 +220,10 @@ class _GamepageState extends State<Gamepage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                ConclusionPage(conc: 'Lose'),
+                                                ConclusionPage(
+                                              conc: 'Lose.',
+                                              word: letters.join(""),
+                                            ),
                                           ));
                                     }
                                   });
@@ -210,4 +247,82 @@ class _GamepageState extends State<Gamepage> {
       ),
     );
   }
+}
+
+mainMenuAlertDialog(BuildContext context) {
+  Widget yesButton = TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, "/welcome");
+      },
+      child: const Text(
+        "Yes",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  Widget noButton = TextButton(
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      child: const Text(
+        "No",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.indigo[500],
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    title: const Text("Main Menu"),
+    content: const Text("Are you sure you want to go main menu?"),
+    actions: [
+      yesButton,
+      noButton,
+    ],
+  );
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return alert;
+    },
+  );
+}
+
+newGameAlertDialog(BuildContext context) {
+  Widget yesButton = TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, "/game");
+      },
+      child: const Text(
+        "Yes",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  Widget noButton = TextButton(
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      child: const Text(
+        "No",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.indigo[500],
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    title: const Text("New Game"),
+    content: const Text("Are you sure you want to open a new game?"),
+    actions: [
+      yesButton,
+      noButton,
+    ],
+  );
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return alert;
+    },
+  );
 }
