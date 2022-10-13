@@ -1,18 +1,16 @@
 import 'dart:io';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:hangman_game/screens/gamepage.dart';
 import 'package:hangman_game/utils/colors.dart';
 
 class welcomePage extends StatefulWidget {
-  const welcomePage({super.key});
-
+  welcomePage({super.key});
   @override
   State<welcomePage> createState() => _welcomePageState();
 }
 
-class _welcomePageState extends State<welcomePage> {
+class _welcomePageState extends State<welcomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -33,14 +31,8 @@ class _welcomePageState extends State<welcomePage> {
             customButton(
               sizeWidth: sizeWidth,
               sizeHeight: sizeHeight,
-              text: "Settings",
-              which: 2,
-            ),
-            customButton(
-              sizeWidth: sizeWidth,
-              sizeHeight: sizeHeight,
               text: "Exit",
-              which: 3,
+              which: 2,
             ),
           ],
         ),
@@ -149,27 +141,60 @@ class _customButtonState extends State<customButton> {
                   switch (widget.which) {
                     case 1:
                       setState(() {
-                        Future((() {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Gamepage(),
-                              ));
-                        }));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Gamepage(),
+                            ));
                       });
                       break;
                     case 2:
-                      print("world");
-                      break;
-                    case 3:
-                      exit(0);
+                      showAlertDialog(context);
                   }
                 },
                 child: Text(
                   widget.text,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 ))),
       ),
     );
   }
+}
+
+showAlertDialog(BuildContext context) {
+  Widget yesButton = TextButton(
+      onPressed: () {
+        exit(0);
+      },
+      child: const Text(
+        "Yes",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  Widget noButton = TextButton(
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+      child: const Text(
+        "No",
+        style: TextStyle(color: Colors.black, fontSize: 20),
+      ));
+
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.indigo[500],
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    title: const Text("Exit"),
+    content: const Text("Are you sure you want to quit?"),
+    actions: [
+      yesButton,
+      noButton,
+    ],
+  );
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return alert;
+    },
+  );
 }
